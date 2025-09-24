@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BallController : MonoBehaviour
 {
@@ -6,7 +8,10 @@ public class BallController : MonoBehaviour
     public int PontosCL = 0;
     public float speed = 5f;
     private Rigidbody2D rb;
-    public TMPro placar;
+    public TMP_Text placar;
+    private Vector2 direction;
+    private float xDirection;
+    private float yDirection;
 
     void Start()
     {
@@ -17,31 +22,52 @@ public class BallController : MonoBehaviour
     void LaunchBall()
     {
         // Decide uma direção aleatória no eixo X (esquerda ou direita)
-        float xDirection = Random.value < 0.5f ? -1f : 1f;
+        xDirection = Random.value < 0.5f ? -1f : 1f;
         // Define uma leve variação no eixo Y (para não ir totalmente reto)
-        float yDirection = Random.Range(-0.5f, 0.5f);
+        yDirection = Random.Range(-0.5f, 0.5f);
 
         // Normaliza a direção e aplica a velocidade
-        Vector2 direction = new Vector2(xDirection, yDirection).normalized;
-        rb.velocity = direction * speed;
-        
-        placar.text = $"{PontosCR} X {PontosCL}";
+        direction = new Vector2(xDirection, yDirection).normalized;
+        rb.linearVelocity = direction * speed;
+
+        placar.text = $"{PontosCL} x {PontosCR}";    
     }
 
-    void Collider2D(Collider2D col)
+    private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.tag == "GolLocal")
-        { 
+        if (col.gameObject.tag == "Gol Local")
+        {
+            Destroy(gameObject);
             PontosCR += 1;
-            placar.text = $"{PontosCR} x {PontosCL}";
+            placar.text = $"{PontosCL} x {PontosCR}";
             Debug.Log("Gol do visitante!");
         }
-        if (col.gameObject.tag == "GolRemoto")
+
+        if (col.gameObject.tag == "Gol Remoto")
         {
+            Destroy(gameObject);
             PontosCL += 1;
-            placar.text = $"{PontosCR} x {PontosCL}";
-            Debug.Log("Gol da casa!"); 
+            placar.text = $"{PontosCL} x {PontosCR}";
+            Debug.Log("Gol da casa!");
+        }
+
+        if (col.gameObject.tag == "PlayerLocal")
+        { 
+            yDirection = Random.Range(-1f, 1f);
+            direction = new Vector2(xDirection, yDirection).normalized;
+            rb.linearVelocity = direction * speed;
+        }
+        if (col.gameObject.tag == "PlayerRemoto")
+        {
+            yDirection = Random.Range(-1f, 1f);
+            direction = new Vector2(-xDirection, yDirection).normalized;
+            rb.linearVelocity = direction * speed;
+        }
+
+        if (col.gameObject.tag == "Parede1" || col.gameObject.tag == "Parede2")
+        {
+            rb.linearVelocity = new Vector2(xDirection, -yDirection);
+            rb.linearVelocity = direction * speed;
         }
     }
-    
 }

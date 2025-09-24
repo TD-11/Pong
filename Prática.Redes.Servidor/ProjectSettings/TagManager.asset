@@ -7,6 +7,10 @@ TagManager:
   - Gol Local
   - Gol Remoto
   - Bola
+  - PlayerLocal
+  - PlayerRemoto
+  - Parede1
+  - Parede2
   layers:
   - Default
   - TransparentFX
