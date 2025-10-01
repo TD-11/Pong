@@ -10,7 +10,7 @@ public class UdpClientTwoClients : MonoBehaviour {
     Thread receiveThread;
     IPEndPoint serverEP;
     int myId = -1;
-    Vector3 remotePos = Vector3.zero;
+    Vector2 remotePos = new Vector2(7f, 0f);
 
     public GameObject localCube;
     public GameObject remoteCube;
@@ -26,7 +26,7 @@ public class UdpClientTwoClients : MonoBehaviour {
     void Update() {
         // Movimento local
         float v = Input.GetAxis("Vertical");
-        localCube.transform.Translate(new Vector3(0, v, 0) * Time.deltaTime * 5);
+        localCube.transform.Translate(new Vector2(0, v) * Time.deltaTime * 5);
 
         // Envia posição
         string msg = "POS:" +
@@ -57,7 +57,7 @@ public class UdpClientTwoClients : MonoBehaviour {
                     int id = int.Parse(parts[0]);
                     if (id != myId) {
                         float y = float.Parse(parts[2], CultureInfo.InvariantCulture);
-                        remotePos = new Vector3(0, y, 0);
+                        remotePos = new Vector2(0f, y);
                     }
                 }
             }
